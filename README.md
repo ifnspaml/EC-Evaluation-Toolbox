@@ -4,8 +4,12 @@
 
 ## 1. Introduction
 
-Acoustic echo cancellation (AEC) and suppression (AES) are widely researched topics. However, only few papers about hybrid or deep acoustic echo control provide a solid comparative analysis of their methods as it was common with classical signal processing approaches. There can be distinct differences in the behaviour of an AEC/AES model which cannot be fully represented by a single metric or test condition, especially when comparing classical signal processing and machine-learned approaches. These characteristics include convergence behaviour, reliability under varying speech levels or far-end signal types, as well as robustness to adverse conditions such as harsh nonlinearities, room impulse response switches or continuous changes, or delayed echo. 
+Acoustic echo cancellation (AEC) and suppression (AES) are widely researched topics. However, only few papers about hybrid or deep acoustic echo control provide a solid comparative analysis of their methods as it was common with classical signal processing approaches. There can be distinct differences in the behaviour of an AEC/AES model which cannot be fully represented by a single metric or test condition, especially when comparing classical signal processing and machine-learned approaches. These characteristics include convergence behaviour, reliability under varying speech levels or far-end (FE) signal types, as well as robustness to adverse conditions such as harsh nonlinearities, room impulse response switches or continuous changes, or delayed echo. 
 We provide a toolbox that allows evaluation on an extended set of test conditions and metrics, mainly focussed around the application on 16 kHz signals.
+
+![AEC/AES system](./Images/AEC_AES.png)
+
+We refer to system signals as shown above. The FE reference signal x(n) is played by the loudspeaker and picked up by the microphone as echo d(n) alongside the near-end (NE) speech signal s(n) and background noise n(n). The microphone signal y(n) is processed by the AEC/AES system, resulting in the enhanced signal e(n).
 
 If you use our toolbox for your research, please cite our work:
 
@@ -47,7 +51,7 @@ Black-box metrics:
 }
 ```
 
-Continuously Changing Impulse Response:
+Braunschweig Dynamic Impulse Response Database:
 ```BibTex
 @InProceedings{Jung2013,
   author      = {Marc-André Jung and Lucca Richter and Tim Fingscheidt},
@@ -62,11 +66,13 @@ Continuously Changing Impulse Response:
 
 ### 1.1 Roadmap
 
-- [ ] GitHub Release
-- [ ] Dataset provision / expanded DL aid
-- [ ] expand dataset support
-- [ ] expanded model zoo
-- [ ] transition to unified framework for data generation, training, and testing
+We plan to improve our initial published code to be more accessible and intuitive to use by adding more helper scripts and ultimately transitioning to a fully python-based version of the Toolbox.
+
+- [x] GitHub Release
+- [ ] Automated script for download and preprocessing of available datasets (where licenses allow)
+- [ ] Expand out-of-the box dataset support: generic file discovery for speaker data
+- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code...
+- [ ] ... including model training 
 
 ### 1.2 Prerequisites / Compatibility
 
@@ -78,16 +84,22 @@ The data generation in this toolbox was conducted on Matlab 2021b.
 
 Python Requisites:
 
-All packages are listed as used for the evaluation in our journal article. While not a definitive requirement, deviating from the reported versions might cause some functionality to break.
+Install the following python packages (using conda) as shown below:
 
-| Module    | version   | | Module    | version   |
-| --------  | -------   |-| --------  | -------   |
-| Python    | 3.12      | | numpy     | 1.26.4    |  
-| PyTorch   | 2.2.0     | | scipy     | 1.12.0    |
-| CUDA      | 11.8      | | soundfile | 0.12.1    |
-|           |           | | librosa   | 0.10.1    |
-|           |           | | webrtcvad | 2.0.10    |
+```bash
+conda create -n your_env python=3.12
 
+# torch with GPU support
+pip3 install torch --index-url https://download.pytorch.org/whl/cu118 
+# torch on CPU
+pip3 install torch
+
+conda install numpy scipy
+pip3 install soundfile librosa webrtcvad onnxruntime
+
+# custom P.862 Corrigendum 1 python module
+pip install git+https://pipuser:9suQnFZm9ENhsFyBFgvn@git.rz.tu-bs.de/ifn/svml/pesq.git
+```
 
 ## 2. Metrics (and Metric Setup Instructions)
 
@@ -99,25 +111,33 @@ Note: All metrics can be verified by running the metric_unittest.py file in the 
 
 #### Perceptual Evaluation of Speech Quality (PESQ)
 
-The perceptual evalution of quality (PESQ) metric is a widely used metric for the assessment of speech quality, standardized as ITU-T recommendation P.862, and regularly used in evaluation of echo control mechanism. Please note that with the presence of unsuppressed background noise, results are expected to yield low scores.
+The perceptual evalution of quality (PESQ) metric is a widely used metric for the assessment of speech quality, standardized as [ITU-T recommendation P.862](https://www.itu.int/rec/T-REC-P.862.2), and regularly used in evaluation of echo control mechanism. Please note that with the presence of unsuppressed background noise, results are expected to yield low scores.
 
-[pesq git]
+A custom PESQ python module (including Corrigendum 1) can be installed via:
+
+```bash
+pip install git+https://pipuser:9suQnFZm9ENhsFyBFgvn@git.rz.tu-bs.de/ifn/svml/pesq.git
+```
+
+Please note: If you install the python pesq module (pip install pesq), you need to uninstall it first. The modules are not identical, as ours includes Corrigendum 1.
 
 Once installed correctly, you can call PESQ through our macro script (details below) or by calling:
 
 ```python
-from evaluation_metrics import compute_PESQ
+from pesq import pesq
 
-result = compute_PESQ(s, e, sampling rate, int_range_flag=False)
+# signals: enhanced signal [e]; clean NE speech [s]
+result = pesq(sampling_rate, s, e)
 ```
 
 #### Echo Return Loss Enhancement (ERLE)
 
-The echo return loss enhancement (ERLE) metric is used to evaluate the reduction of the far-end echo. It can be accessed via 
+The echo return loss enhancement (ERLE) metric is commonly used to evaluate the suppression of far-end echo. Our implementation follows [[Vary, 2006]](https://onlinelibrary.wiley.com/doi/book/10.1002/0470031743). It can be accessed via 
 
 ```python
 from evalution_metrics import compute_ERLE
 
+# signals: enhanced signal [e]; microphone signal [y]; echo component [d]
 mean_erle, erle_over_time = compute_ERLE(y, e, d, s_f=0.99)
 ```
 
@@ -135,6 +155,7 @@ The AECMOS metrics can be calculated via:
 import os
 from aecmos_local import AECMOSEstimator
 
+# signals: enhanced signal [e]; microphone signal [y]; reference signal [x]
 # talk_type in ['nst', 'fst', 'dt']; refering to single-talk far-end, single-talk near-end, and double-talk
 aecmos      = AECMOSEstimator(os.getcwd() +'/models/Run_1663915512_Stage_0.onnx')
 echo, other = aecmos.run(talk_type='dt', lpb_sig=x,mic_sig=y,enh_sig=e)
@@ -144,32 +165,43 @@ Note that this function evaluates on the entire sequence and does not contain th
 
 #### Log-Spectral Distance (LSD)
 
-The log-spectral distance (LSD) metric,much like PESQ, reports overall quality (both NE speech preservation and echo suppression effectiveness affect the score), but is a straightforward distance metric. As such, it is less prone to performance differences getting masked by noise, but in return is less descriptive on the perceptual impact of residual echo and NE speech degradation. It can be accessed via:
+The log-spectral distance (LSD) metric (implemented after [[Katsir, 2011]](https://ieeexplore.ieee.org/document/7074052)), much like PESQ, reports overall quality (both NE speech preservation and echo suppression effectiveness affect the score), but is a straightforward distance metric. As such, it is less prone to performance differences getting masked by noise, but in return is less descriptive on the perceptual impact of residual echo and NE speech degradation. It can be accessed via:
 
 ```python
 from evaluation_metrics import compute_LSD
 
-LSD_score = compute_LSD(s, e)
+# signals: enhanced signal [e]; clean NE speech [s]
+LSD_scores, LSD_mean = compute_LSD(s, e)
 ```
 
 ### 2.2 Black-Box Metric Variants
 
-PESQ, ERLE, and LSD are also available as black-box variants. The use of the black-box algorithm allows the disentanglement components in the enhanced signal, which can be used for a more precise evaluation of certain performance aspects (e.g., measuring NE PESQ without the disturbing influence of background noise). The black-box components can be computed and applied via:
+PESQ, ERLE, and LSD are also available as black-box variants. The use of the black-box algorithm allows the disentanglement components in the enhanced signal, which can be used for a more precise evaluation of certain performance aspects (e.g., measuring NE PESQ without the disturbing influence of background noise). A visual representation of the black-box algorithm [by the original authors](https://www.isca-archive.org/interspeech_2007/fingscheidt07_interspeech.pdf) is given below:
+
+![Black-box](./Images/black_box.png)
+
+As can be seen in the figure, the black-box algorithm computes a mask from the microphone signal (based on the enhanced signal,called s_hat(n)) and applies the mask to the individual signal components.
+
+The black-box components can be computed and applied via:
 
 ```python
 from audio_processing import get_BB_components
 from evaluation_metrics import *
+from pesq import pesq
 
-params = {'window': 'Blackman', 'fft_size': 512, 'window_shift': 64}
+params = {'window': window, 'K_fft': 512, 'K_mask': 257, 'frame_length':512, 'frame_shift': 64}
 
+
+# signals: enhanced signal [e]; microphone signal [y]
 # components: NE speech [s], echo [d], noise [n]
-[s_tilde, d_tilde, n_tilde] = get_BB_components(y, components=[s, d, n], params=params)
+[s_tilde, d_tilde, n_tilde] = get_BB_components(e, y, components=[s, d, n], params=params)
 
-result                      = compute_PESQ(s, s_tilde, sampling rate, wb_flag=True, int_range_flag=False)
+result                      = pesq(sampling_rate, s, s_tilde)
 mean_erle, erle_over_time   = compute_ERLE(y, s_tilde, d, d_tilde, s_f=0.99)
 LSD_score                   = compute_LSD(s, s_tilde)
 ```
 
+In order for the black-box algorithm to work properly, it is crucial that the indivual components are aligned with their counterpart inside the mixture (this is by default the case for data generated from our macro script). 
 Note that compute_erle takes an additional argument in black-box configuration.
 While the black-box parameters are adjustable, it is recommended to leave them as is for optimal component disentanglement.
 
@@ -177,7 +209,7 @@ While the black-box parameters are adjustable, it is recommended to leave them a
 
 The evaluation of all metrics over a large number of files can be automated by the provided macro script score_AEC.py in the evaluation folder. In theory, the script can be used for both evaluation of pre-processed files as well as processing and evalution of test sets on implemented models. Please note that some functionality of the script (e.g., automatic sectioning of input data into single-/double-talk sections with separate metrics) requires meta-data created from the test set generation macro script.
 
-Examples for the evaluations conducted during our journal paper investigations are provided in the batch_script.py file. The following steps have to be taken to use the macro script:
+Examples for the evaluation calls are provided in the batch_script.py file. The following steps have to be taken to use the macro script:
 
 1. Make sure all metric prerequisites are fulfilled.
 2. Change the dir_path variable in GetaecTestSet.py according to your setup.
@@ -231,34 +263,44 @@ elif Model_select == '<new_model_name>':
 
 This toolbox also allows the generation of datasets featuring a high variety of conditions. In the following sections, we describe the available functions within the macro script. Currently, the dataset generation is implemented in Matlab, and allows only limited access to individual functions outside the macro script. In the future, this will be replaced by a pythonic and more modular implementation.
 
-Note that we will mainly focus on describing the merit for generating test sets in the following sections. However, The same script can be used to create training and validation datasets, and offers a variety of functionality specifically for this purpose. The folowing steps need to be taken to generate data via the macro script:
+Note that we will mainly focus on describing the merit for generating test sets in the following sections. However, The same script can be used to create training and validation datasets, and offers a variety of functionality specifically for this purpose. The following steps need to be taken to generate data via the macro script:
 
 1. Download the respective datasets (or define paths to existing ones).
-2. Adjust [params.m] file to reflect the desired condition.
-3. If necessary, adjust file discovery in macro script to fit dataset. [...]
+2. Install [the actlevel function](https://github.com/foss-for-synopsys-dwc-arc-processors/G722/tree/master/sv56) by downloading the linked folder and compiling (C compiler required):
+```C
+cc -o actlevel actlevel.c sv-p56.c ugst-utl.c -lm
+```
+3. Adjust [params.m] file to reflect the desired condition.
+4. If necessary, adjust file discovery in macro script to fit unfamiliar datasets.
 
 ### 3.1 Dataset Download
 
-This section describes the retrieval of the (mostly freely available) datasets set up for the current macro script. Other datasets can be used, but might require manual implementation into the data generation script (especially speech data due to separation of male and female speakers). Datasets are usually stored in the '00_Database' folder.
+This section describes the retrieval of the (mostly freely available) datasets set up for the current macro script. Other datasets can be used, but might require manual implementation in the main.m file of the data generation script. Datasets are usually stored in the '00_Data' folder.
 
 #### Speech Data
 
 [CSTR-VCTK](https://datashare.ed.ac.uk/handle/10283/3443):
-High quality recordings of English speakers with various accents. Provided in 48 kHz ,requires downsampling to 16 kHz first. [TODO: guide]
+High quality recordings of English speakers with various accents. Provided in 48 kHz, requires downsampling to 16 kHz first.
 
 [TIMIT](https://catalog.ldc.upenn.edu/LDC93S1): Common dataset in speech enhancement. Application fee required.
 
 #### Noise Databases
 
-[DEMAND](https://dcase-repo.github.io/dcase_datalist/datasets/scenes/demand.html): Provided in 48 kHz, resampling to 16 kHz required.
+[DEMAND](https://dcase-repo.github.io/dcase_datalist/datasets/scenes/demand.html): Provided in 48 kHz, downsampling to 16 kHz required.
 
 [ETSI](https://docbox.etsi.org/stq/Open/EG%20202%20396-1%20Background%20noise%20database)
 
 #### RIR Databases
 
-Aachen Impulse Response Database:
+The provided .mat files of the RIR databases are provided via Git LFS. To download them, make sure git LFS is installed:
 
-Dynamic Impulse Response [Jung]:
+```bash
+git lfs install
+```
+
+[Aachen Impulse Response Database](https://www.iks.rwth-aachen.de/en/research/tools-downloads/databases/aachen-impulse-response-database/): Collection of recorded real-world RIRs. Processed collection is provided in the AIR_binaural.mat file as part of this toolbox in accordance to the the provided MIT license.
+
+Braunschweig Dynamic Impulse Response Database: Recordings of continuously changig RIR environment as described in  [[Jung, 2011]](https://ieeexplore.ieee.org/document/6639252). Files are provided as part of this toolbox.
 
 ### 3.2 Test Conditions
 
@@ -278,7 +320,7 @@ param.test_condition = 1;           % Testing condition (with convergence period
 param.len_sec = 8;                  % Condition section lengths
 ```
 
-Choose test_condition = 0 for normal generation without preceeding convergence sections (you still can simulate STFE/STNE by disabling components in the evaluation macro script). The length of the sections can be controlled via the len_sec parameter.
+Choose test_condition = 0 for normal generation without preceeding convergence sections (you still can simulate STFE/STNE by disabling components in the evaluation macro script). The length of the sections can be controlled via the len_sec parameter. An example application can be found in [our journal]() in Section IV.A/B.
 
 #### Far-End Excitation and Nonlinearity
 
@@ -307,7 +349,7 @@ param.NLfunc{1}     = 'SEF';                    % SEF       - scaled error funct
 param.NLoptions     = [0.5, 1, 10, 999];        % beta parameter for SEF
 ```
 
-The parameter NLoptions controls the beta value of the SEF function (see our journal article, Section III.A, for details).
+The parameter NLoptions controls the beta value of the SEF function (see [our journal article](), Section III.A, for details). An example application can be found in our journal in Section IV.E.
 
 #### Echo Generation
 
@@ -332,7 +374,7 @@ param.generate_shortIR  = 512;
 % if > 0, generates an additional echo scenario with shortened RIR
 ```
 
-Specific methods might require additional method-specific parameters found in the param.m file. 
+Specific methods might require additional method-specific parameters found in the param.m file.
 
 If you wish to introduce a RIR change into your dataset, you can adjust the following parameters of the macro script:
 
@@ -341,13 +383,20 @@ param.IR_pathChange = [0,0];         % time frame ([start,stop] in s) in which R
 param.IR_fade       = [0.00, 0.00];  % fade-in time of new RIR ([min,max] in s)
 ```
 
-Note that the script will automatically provide a version of the dataset without RIR switch for accurate analysis of reconvergence behaviour.
+Note that the script will automatically provide a version of the dataset without RIR switch for accurate analysis of reconvergence behaviour. An example application can be found in [our journal]() in Section IV.C.
 
 [Technical comment] The RIR after the switch is used for generating the respective non-switch files. Therefore, both files share the same echo component after the RIR switch, allowing for accurate comparison of performance.
 
 #### Continuously Changing Room Impulse Response
 
-A special case of impulse response rarely reported is the continuously changing RIR. It poses a particularly difficult condition for EC models, as it requires constant reconvergence. We use recordings of Jung [REF], whose setup is also reflected in ITU-T P.1110 [REF] and P.1130 [REF]. The provided method can be adjusted with the following parameters:
+A special case of impulse response rarely reported is the continuously changing RIR. It poses a particularly difficult condition for EC models, as it requires constant reconvergence. We use recordings of [[Jung, 2011]](https://ieeexplore.ieee.org/document/6639252), whose setup is also reflected in [ITU-T P.1110](https://www.itu.int/rec/T-REC-P.1110/en) and [P.1130](https://www.itu.int/rec/T-REC-P.1130/en). A visualization of the recording setup is given below:
+
+![BSdIR recording setup](./Images/BSdIR_recording.png)
+
+The image shows our car setup for dynamic RIR generation, with a handsfree microphone at rear-view mirror position and four loudspeakers. Changes in the RIR are simulated by rotating a reflecting surface on the passenger seat along the azimuth angle Φ.
+
+The provided method for loading an RIR from the recordings' 
+.mat files can be adjusted with the following parameters:
 
 ```Matlab
 %% TUBS dynIR-specific values
@@ -357,11 +406,17 @@ param.step       = 1;   % step size (skip x-1 samples in recording)
 param.freeze     = 4;   % time in s after which RIR is frozen
 ```
 
-Note that this RIR, as it contains an individual vector for each recorded sample, requires considerable memory resources and time during dataset generation.
+Note that this RIR, as it contains an individual vector for each recorded sample, requires considerable memory resources and time during dataset generation. An example application can be found in [our journal]() in Section IV.D.
 
 #### SER/SNR adjustment
 
-The macro script allows adjusting audio levels using [the ITU-P P.56 standard](https://github.com/YouriT/matlab-speech/blob/master/MATLAB_CODE_SOURCE/voicebox/activlev.m), which is mainly used for setting signal-to-echo and signal-to-noise ratios (SER/SNR). When setting SER and SNR values, you can choose to pass a list, from which the respective value is picked randomly for each file:
+The macro script allows adjusting audio levels using [the ITU-P P.56 standard](https://github.com/foss-for-synopsys-dwc-arc-processors/G722/tree/master/sv56), which is mainly used for setting signal-to-echo and signal-to-noise ratios (SER/SNR). Download the linked folder and compile using the command (requires c compiler, e.g., gcc):
+
+```C
+cc -o actlevel actlevel.c sv-p56.c ugst-utl.c -lm
+```
+
+Place the actlevel.exe into the base 01_Preprocessing folder. When setting SER and SNR values, you can choose to pass a list, from which the respective value is picked randomly for each file:
 
 ```Matlab
 param.dBov     = -21;               % base audio level (in dB)
@@ -372,7 +427,7 @@ param.SER  = [-20,-15,-10,-5,0,5,10];     % randomly chosen from list
 param.SNR  = [0, 5, 10, 15, 20];          % randomly chosen from list
 ```
 
-Passing 99 as a SER/SNR value will disable the respective component. If you want to control the SER/SNR during training or run evaluation on multiple specific SER/SNR conditions, it is recommended to set the values to 0 during dataset generation. The evaluation macro script contains arguments for relative(!) SER/SNR adjustment.
+Passing 99 as a SER/SNR value will disable the respective component. If you want to control the SER/SNR during training or run evaluation on multiple specific SER/SNR conditions, it is recommended to set the values to 0 during dataset generation. The evaluation macro script contains arguments for relative(!) SER/SNR adjustment. An example application can be found in [our journal]() in Section IV.F.
 
 #### Delay 
 

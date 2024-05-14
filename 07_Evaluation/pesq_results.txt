@@ -1,0 +1,9 @@
+REFERENCE	 DEGRADED	 PESQMOS	 MOSLQO	 SAMPLE_FREQ	 MODE
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 1.636	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 4.546	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 1.636	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 4.546	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 1.636	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 4.546	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 1.636	 16000	wb
+.\temp\ref_temp.wav	 .\temp\test_temp.wav	 -1.000	 4.546	 16000	wb
