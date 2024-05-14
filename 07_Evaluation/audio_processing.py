@@ -427,17 +427,11 @@ def get_BB_components(s_post_in, mic, components: list, framing_params):
 
     for frame_idx in range(num_frames):
         # compute non-redundant fft bins for current frame
-        s_post = get_fft_frame(s_post_in, offset, window, framing_params)
-
-        S_post_frame = (np.hstack((np.real(s_post), np.imag(s_post[1:-1])))).astype('float32')
-
-        masked_signal_real = S_post_frame[0:num_nonredundant]
-        masked_signal_imag = np.hstack((np.zeros((1,)), S_post_frame[num_nonredundant:], np.zeros((1,))))
-        s_hat_fft_complex = masked_signal_real + 1j * masked_signal_imag
+        s_hat_fft = get_fft_frame(s_post_in, offset, window, framing_params)
 
         #get BB components
         y_fft = get_fft_frame(mic, offset, window, framing_params)
-        gain_bb = np.clip(np.abs(s_hat_fft_complex) / np.abs(y_fft), None, 1) * (np.exp(1j * np.angle(s_hat_fft_complex)) / np.exp(1j * np.angle(y_fft)))
+        gain_bb = np.clip(np.abs(s_hat_fft) / np.abs(y_fft), None, 1) * (np.exp(1j * np.angle(s_hat_fft)) / np.exp(1j * np.angle(y_fft)))
 
         for i, comp in enumerate(components):
 

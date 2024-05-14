@@ -13,6 +13,9 @@ out_dir     = '../08_Results/Kalman_Enhanced/'
 
 sampling_rate = 16000
 
+stfe_end = 10*sampling_rate
+dt_start = 20*sampling_rate
+
 y, _ = librosa.load(data_dir + 'nearend_mic/sp1/file_1_1.wav', sr = sampling_rate)
 x, _ = librosa.load(data_dir + 'farend_speech/sp1/file_1_1.wav', sr = sampling_rate)
 s, _ = librosa.load(data_dir + 'nearend_speech/sp1/file_1_1.wav', sr = sampling_rate)
@@ -37,23 +40,23 @@ except:
     stop_token = True
 
 try:
-    mean_erle, erle_over_time = compute_ERLE(y, e, d, s_f=0.99)
+    mean_erle, erle_over_time = compute_ERLE(y[:stfe_end], e[:stfe_end], d[:stfe_end], s_f=0.99)
     mean_erle = np.around(mean_erle,decimals=0)
-    if mean_erle == -50:
+    if mean_erle == 4:
         print('ERLE: \t passed')
     else:
-        print('ERLE: \t expected -50 dB, scored ' + str(mean_erle))
+        print('ERLE: \t expected 4 dB, scored ' + str(mean_erle))
 except:
     print('ERLE: \t failed')
     stop_token = True
 
 try:
-    LSD_scores, LSD_mean = compute_LSD(s, e)
+    LSD_scores, LSD_mean = compute_LSD(s[dt_start:], e[dt_start:])
     LSD_mean = np.around(LSD_mean,decimals=0)
-    if LSD_mean == 12:
+    if LSD_mean == 13:
         print('LSD: \t passed')
     else:
-        print('LSD: \t expected 12 dB, scored ' + str(LSD_mean))
+        print('LSD: \t expected 13 dB, scored ' + str(LSD_mean))
 except:
     print('LSD: \t failed')
     stop_token = True
@@ -72,39 +75,39 @@ except:
     stop_token = True
 
 # components: NE speech [s], echo [d], noise [n]
-[s_tilde, d_tilde, n_tilde] = get_BB_components(y, mic=y, components=[s, d, n], framing_params=params)
+[s_tilde, d_tilde, n_tilde] = get_BB_components(e, y, components=[s, d, n], framing_params=params)
 
 print('Black-box evaluation...')
 
 try:
     result = pesq(sampling_rate, s, s_tilde)
     results = np.around(result,decimals=2)
-    if results == 4.61:
+    if results == 4.47:
         print('PESQ: \t passed')
     else:
-        print('PESQ: \t expected 4.61, scored ' + str(result))
+        print('PESQ: \t expected 4.47, scored ' + str(result))
 except:
     print('PESQ: \t failed')
     stop_token = True
 
 try:
-    mean_erle, erle_over_time   = compute_ERLE(y, s_tilde, d, d_tilde, s_f=0.99)
+    mean_erle, erle_over_time   = compute_ERLE(y[:stfe_end], s_tilde[:stfe_end], d[:stfe_end], d_tilde[:stfe_end], s_f=0.99)
     mean_erle = np.around(mean_erle,decimals=0)
-    if mean_erle == 2.0:
+    if mean_erle == 7.0:
         print('ERLE: \t passed')
     else:
-        print('ERLE: \t expected 2 dB, scored ' + str(mean_erle))
+        print('ERLE: \t expected 7 dB, scored ' + str(mean_erle))
 except:
     print('ERLE: \t failed')
     stop_token = True
 
 try:    
-    LSD_scores, LSD_mean = compute_LSD(s, s_tilde)
+    LSD_scores, LSD_mean = compute_LSD(s[dt_start:], s_tilde[dt_start:])
     LSD_mean = np.around(LSD_mean,decimals=0)
-    if LSD_mean == 3.0:
+    if LSD_mean == 5.0:
         print('LSD: \t passed')
     else:
-        print('LSD: \t expected 3 dB, scored ' + str(LSD_mean))
+        print('LSD: \t expected 5 dB, scored ' + str(LSD_mean))
 except:
     print('LSD: \t failed')
     stop_token = True
