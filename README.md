@@ -7,7 +7,7 @@
 Acoustic echo cancellation (AEC) and suppression (AES) are widely researched topics. However, only few papers about hybrid or deep acoustic echo control provide a solid comparative analysis of their methods as it was common with classical signal processing approaches. There can be distinct differences in the behaviour of an AEC/AES model which cannot be fully represented by a single metric or test condition, especially when comparing classical signal processing and machine-learned approaches. These characteristics include convergence behaviour, reliability under varying speech levels or far-end (FE) signal types, as well as robustness to adverse conditions such as harsh nonlinearities, room impulse response switches or continuous changes, or delayed echo. 
 We provide a toolbox that allows evaluation on an extended set of test conditions and metrics, mainly focussed around the application on 16 kHz signals.
 
-![AEC/AES system](./Images/AEC_AES.png)
+![AEC/AES system](Images/AEC_AES.PNG)
 
 We refer to system signals as shown above. The FE reference signal x(n) is played by the loudspeaker and picked up by the microphone as echo d(n) alongside the near-end (NE) speech signal s(n) and background noise n(n). The microphone signal y(n) is processed by the AEC/AES system, resulting in the enhanced signal e(n).
 
@@ -178,7 +178,7 @@ LSD_scores, LSD_mean = compute_LSD(s, e)
 
 PESQ, ERLE, and LSD are also available as black-box variants. The use of the black-box algorithm allows the disentanglement components in the enhanced signal, which can be used for a more precise evaluation of certain performance aspects (e.g., measuring NE PESQ without the disturbing influence of background noise). A visual representation of the black-box algorithm [by the original authors](https://www.isca-archive.org/interspeech_2007/fingscheidt07_interspeech.pdf) is given below:
 
-![Black-box](./Images/black_box.png)
+![Black-box](Images/black_box.PNG)
 
 As can be seen in the figure, the black-box algorithm computes a mask from the microphone signal (based on the enhanced signal,called s_hat(n)) and applies the mask to the individual signal components.
 
@@ -391,7 +391,7 @@ Note that the script will automatically provide a version of the dataset without
 
 A special case of impulse response rarely reported is the continuously changing RIR. It poses a particularly difficult condition for EC models, as it requires constant reconvergence. We use recordings of [[Jung, 2011]](https://ieeexplore.ieee.org/document/6639252), whose setup is also reflected in [ITU-T P.1110](https://www.itu.int/rec/T-REC-P.1110/en) and [P.1130](https://www.itu.int/rec/T-REC-P.1130/en). A visualization of the recording setup is given below:
 
-![BSdIR recording setup](./Images/BSdIR_recording.png)
+![BSdIR recording setup](Images/BSdIR_recording.PNG)
 
 The image shows our car setup for dynamic RIR generation, with a handsfree microphone at rear-view mirror position and four loudspeakers. Changes in the RIR are simulated by rotating a reflecting surface on the passenger seat along the azimuth angle Φ.
 
