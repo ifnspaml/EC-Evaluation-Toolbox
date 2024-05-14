@@ -87,7 +87,8 @@ Python Requisites:
 Install the following python packages (using conda) as shown below:
 
 ```bash
-conda create -n your_env python=3.12
+conda create -n <your_env> python=3.12
+conda activate <your_env>
 
 # torch with GPU support
 pip3 install torch --index-url https://download.pytorch.org/whl/cu118 

@@ -21,7 +21,7 @@ def GetaecTestSet(DatasetType, Model_select):
         signalPaths['n'] = FilePathBase + '/nearend_noise'
         signalPaths['meta'] = FilePathBase + '/meta'
         BB_avail = 1                                                    # signal components (e.g., s/d/n) are available
-        sectioned = 0                                                   # DT condition sectioning
+        sectioned = 1                                                   # DT condition sectioning
 
     # examples from Microsoft AEC Challenge
     elif DatasetType == 'bICASSP_DT':
