@@ -13,7 +13,7 @@ We refer to system signals as shown above. The FE reference signal x(n) is playe
 
 If you use our toolbox for your research, please cite our work:
 
-Application of the toolbox for AEC/AES analysis (will be updated once published):
+Application of the toolbox for AEC/AES analysis (will be updated once finally published):
 ```BibTex
 @Article{Seidel2024,
   author      = {Ernst Seidel and Tim Fingscheidt},
@@ -22,8 +22,8 @@ Application of the toolbox for AEC/AES analysis (will be updated once published)
   year		= {2024},
   volume	= {},
   number	= {},
-  pages		= {},
-  month		= jun,
+  pages		= {1-15},
+  month		= may,
 }
 ```
 
@@ -307,7 +307,7 @@ Braunschweig Dynamic Impulse Response Database: Recordings of continuously chang
 
 By adjusting the configuration of the macro script, the generated dataset can be adjusted to exhibit different conditions a system might encounter in practical applications. The generation of diverse testing conditions allows for a more in-depth evaluation of echo control systems, giving insight into their behaviour and potential shortcomings.
 
-Test conditions can be adjusted via the [parameter.m] script. 
+Test conditions can be adjusted via the parameter.m script. 
 
 #### Double- and Single-Talk Conditions
 
@@ -321,7 +321,7 @@ param.test_condition = 1;           % Testing condition (with convergence period
 param.len_sec = 8;                  % Condition section lengths
 ```
 
-Choose test_condition = 0 for normal generation without preceeding convergence sections (you still can simulate STFE/STNE by disabling components in the evaluation macro script). The length of the sections can be controlled via the len_sec parameter. An example application can be found in [our journal]() in Section IV.A/B.
+Choose test_condition = 0 for normal generation without preceeding convergence sections (you still can simulate STFE/STNE by disabling components in the evaluation macro script). The length of the sections can be controlled via the len_sec parameter. An example application can be found in [our journal](https://ieeexplore.ieee.org/document/10535257) in Section IV.A/B.
 
 #### Far-End Excitation and Nonlinearity
 
@@ -350,7 +350,7 @@ param.NLfunc{1}     = 'SEF';                    % SEF       - scaled error funct
 param.NLoptions     = [0.5, 1, 10, 999];        % beta parameter for SEF
 ```
 
-The parameter NLoptions controls the beta value of the SEF function (see [our journal article](), Section III.A, for details). An example application can be found in our journal in Section IV.E.
+The parameter NLoptions controls the beta value of the SEF function (see [our journal article](https://ieeexplore.ieee.org/document/10535257), Section III.A, for details). An example application can be found in our journal in Section IV.E.
 
 #### Echo Generation
 
@@ -384,7 +384,7 @@ param.IR_pathChange = [0,0];         % time frame ([start,stop] in s) in which R
 param.IR_fade       = [0.00, 0.00];  % fade-in time of new RIR ([min,max] in s)
 ```
 
-Note that the script will automatically provide a version of the dataset without RIR switch for accurate analysis of reconvergence behaviour. An example application can be found in [our journal]() in Section IV.C.
+Note that the script will automatically provide a version of the dataset without RIR switch for accurate analysis of reconvergence behaviour. An example application can be found in [our journal](https://ieeexplore.ieee.org/document/10535257) in Section IV.C.
 
 [Technical comment] The RIR after the switch is used for generating the respective non-switch files. Therefore, both files share the same echo component after the RIR switch, allowing for accurate comparison of performance.
 
@@ -428,7 +428,7 @@ param.SER  = [-20,-15,-10,-5,0,5,10];     % randomly chosen from list
 param.SNR  = [0, 5, 10, 15, 20];          % randomly chosen from list
 ```
 
-Passing 99 as a SER/SNR value will disable the respective component. If you want to control the SER/SNR during training or run evaluation on multiple specific SER/SNR conditions, it is recommended to set the values to 0 during dataset generation. The evaluation macro script contains arguments for relative(!) SER/SNR adjustment. An example application can be found in [our journal]() in Section IV.F.
+Passing 99 as a SER/SNR value will disable the respective component. If you want to control the SER/SNR during training or run evaluation on multiple specific SER/SNR conditions, it is recommended to set the values to 0 during dataset generation. The evaluation macro script contains arguments for relative(!) SER/SNR adjustment. An example application can be found in [our journal](https://ieeexplore.ieee.org/document/10535257) in Section IV.F.
 
 #### Delay 
 
