@@ -13,7 +13,7 @@ We refer to system signals as shown above. The FE reference signal x(n) is playe
 
 If you use our toolbox for your research, please cite our work:
 
-Application of the toolbox for AEC/AES analysis (will be updated once finally published):
+Application of the toolbox for AEC/AES analysis (will be updated once final version is published):
 ```BibTex
 @Article{Seidel2024,
   author      = {Ernst Seidel and Tim Fingscheidt},
@@ -407,7 +407,7 @@ param.step       = 1;   % step size (skip x-1 samples in recording)
 param.freeze     = 4;   % time in s after which RIR is frozen
 ```
 
-Note that this RIR, as it contains an individual vector for each recorded sample, requires considerable memory resources and time during dataset generation. An example application can be found in [our journal]() in Section IV.D.
+Note that this RIR, as it contains an individual vector for each recorded sample, requires considerable memory resources and time during dataset generation. An example application can be found in [our journal](https://ieeexplore.ieee.org/document/10535257) in Section IV.D.
 
 #### SER/SNR adjustment
 
