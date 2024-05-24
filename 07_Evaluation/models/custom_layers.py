@@ -118,7 +118,7 @@ class Kalman_filter():
       Y = np.fft.fft(y_frame)
 
       if m % self.U == 0 and np.amax(np.abs(x_frame))>0:
-        self.update(Y,X, D_real=D)
+        self.update(Y,X)
 
       E = self.enhance(Y,X)
 
