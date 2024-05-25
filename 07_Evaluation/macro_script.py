@@ -331,10 +331,6 @@ for SER_value_o in args.SER_adjust:
 						d_in = librosa.resample(d_in, args.sampling_in, args.sampling_AEC)
 
 					s_post = Filter.run(y_in, x_in, d=d_in, settings_dict=eval_config)
-
-					if eval_config['sys_dist']:
-							signal_components['h_est'] 	= s_post[1]
-							s_post						= s_post[0]
 					
 					if not args.sampling_in == args.sampling_AEC:
 						s_post = librosa.resample(s_post, args.sampling_AEC, args.sampling_in)
