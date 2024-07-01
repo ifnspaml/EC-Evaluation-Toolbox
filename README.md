@@ -13,7 +13,7 @@ We refer to system signals as shown above. The FE reference signal x(n) is playe
 
 If you use our toolbox for your research, please cite our work:
 
-Application of the toolbox for AEC/AES analysis (will be updated once final version is published):
+Application of the toolbox for AEC/AES analysis:
 ```BibTex
 @Article{Seidel2024,
   author      = {Ernst Seidel and Tim Fingscheidt},
