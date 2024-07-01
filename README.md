@@ -20,10 +20,11 @@ Application of the toolbox for AEC/AES analysis (will be updated once final vers
   title       = {{Convergence and Performance Analysis of Classical, Hybrid, and Deep Acoustic Echo Control}},
   journal	= {IEEE/ACM Transactions on Audio, Speech, and Language Processing},
   year		= {2024},
-  volume	= {},
+  volume	= {32},
   number	= {},
-  pages		= {1-15},
+  pages		= {2857 - 2870},
   month		= may,
+  doi     = {10.1109/TASLP.2024.3402552}
 }
 ```
 
@@ -69,10 +70,9 @@ Braunschweig Dynamic Impulse Response Database:
 We plan to improve our initial published code to be more accessible and intuitive to use by adding more helper scripts and ultimately transitioning to a fully python-based version of the Toolbox.
 
 - [x] GitHub Release
+- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code [Mid of June 24]
 - [ ] Automated script for download and preprocessing of available datasets (where licenses allow)
-- [ ] Expand out-of-the box dataset support: generic file discovery for speaker data
-- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code...
-- [ ] ... including model training 
+- [ ] Inclusion of training framework and models
 
 ### 1.2 Prerequisites / Compatibility
 
