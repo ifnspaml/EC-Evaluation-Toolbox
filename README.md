@@ -70,7 +70,7 @@ Braunschweig Dynamic Impulse Response Database:
 We plan to improve our initial published code to be more accessible and intuitive to use by adding more helper scripts and ultimately transitioning to a fully python-based version of the Toolbox.
 
 - [x] GitHub Release
-- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code [Mid of August 24, preview in beta branch]
+- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code [ETA Mid of May 24], including:
 - [ ] Automated script for download and preprocessing of available datasets (where licenses allow)
 - [ ] Inclusion of training framework and models
 
