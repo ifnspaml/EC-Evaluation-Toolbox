@@ -338,7 +338,7 @@ param.enableFENoise = 0;    % adds noise to FE signal (settings below)
 You can also choose to apply a non-linear distortion to your loudspeaker signal, which is an important aspect of EC system evaluation, especially for classical, linear echo cancellers who might struggle in such regard. The toolbox offers the following implemented options:
 
 - [Scaled error function](https://www.sciencedirect.com/science/article/abs/pii/S0893608021001258): adjustable parameter to control harshness
-- [Memoryless Sigmoidal](https://web.cse.ohio-state.edu/~wang.77/papers/Zhang-Wang.interspeech18.pdf):  harsh nonlinearity with asymmetric mapping function
+- [Memoryless Sigmoidal](https://www.isca-archive.org/interspeech_2018/zhang18g_interspeech.pdf):  harsh nonlinearity with asymmetric mapping function
 - [Arctan](https://ieeexplore.ieee.org/document/6639252): Simple arctan nonlinearity, rather mild
 
 ```Matlab
