@@ -16,7 +16,7 @@ If you use our toolbox for your research, please cite our work:
 Application of the toolbox for AEC/AES analysis:
 ```BibTex
 @Article{Seidel2024,
-  author      = {Ernst Seidel and Tim Fingscheidt},
+  author      = {Ernst Seidel and Pejman Mowlaee and Tim Fingscheidt},
   title       = {{Convergence and Performance Analysis of Classical, Hybrid, and Deep Acoustic Echo Control}},
   journal	= {IEEE/ACM Transactions on Audio, Speech, and Language Processing},
   year		= {2024},
