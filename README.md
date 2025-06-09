@@ -103,6 +103,9 @@ pip3 install soundfile librosa webrtcvad onnxruntime
 pip install git+https://pipuser:9suQnFZm9ENhsFyBFgvn@git.rz.tu-bs.de/ifn/svml/pesq.git
 ```
 
+The LPS metric used in more recent publications can be foung here:
+https://git.rz.tu-bs.de/ifn-public/LPS
+
 ## 2. Metrics (and Metric Setup Instructions)
 
 As part of this toolbox, we provide various metrics, usable both as standalone python functions (on preprocessed files) or using the macro script for datasets. Some of the metrics require the download of third party source code as detailed below in order to function. All metrics can be accessed individually, or via the macro script (detailed below).
