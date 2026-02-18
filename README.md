@@ -71,7 +71,7 @@ We plan to improve our initial published code to be more accessible and intuitiv
 
 - [x] GitHub Release
 - [ ] add LPS metric
-- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code [ETA Mid of May 24], including:
+- [ ] PyTorch Toolbox: Modular, all-in-one version of the current code [ETA May 25], including:
 - [ ] Automated script for download and preprocessing of available datasets (where licenses allow)
 - [ ] Inclusion of training framework and models
 
